@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2E6A4E">
+<title>Supper Rotation</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%232E6A4E'/><circle cx='16' cy='16' r='8' fill='none' stroke='%23E7A92A' stroke-width='3'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F4F6F1; --surface:#FFFFFF; --surface-2:#EBEFE7; --ink:#1C2620; --ink-2:#56635B; --line:#D6DDD3;
+  --accent:#2E6A4E; --accent-ink:#FFFFFF; --accent-soft:#DCEBE2;
+  --glow:#E7A92A; --glow-soft:#FBEFD2; --glow-ink:#5A3F05;
+  --danger:#B23B32; --shadow:0 1px 2px rgba(28,38,32,.06),0 6px 20px rgba(28,38,32,.06);
+  --display:"Young Serif",Georgia,"Times New Roman",serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme:dark;
+    --bg:#111613; --surface:#19201C; --surface-2:#212A25; --ink:#E5ECE7; --ink-2:#9AA8A0; --line:#2F3A34;
+    --accent:#72C49B; --accent-ink:#0E1A13; --accent-soft:#1F3A2C;
+    --glow:#F0BA4A; --glow-soft:#3A2F17; --glow-ink:#F7DDA2;
+    --danger:#EE7C72; --shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:20px 60px}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+[hidden]{display:none!important}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.005em}
+h1{font-size:28px}
+h2{font-size:22px}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2)}
+.muted{color:var(--ink-2)}
+a{color:var(--accent)}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.small{padding:4px 9px;font-size:13px}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.5;cursor:default}
+
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:2px}
+nav.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:10px;flex-wrap:wrap}
+nav.tabs button{border:0;background:transparent;padding:7px 12px;border-radius:7px;font-weight:600;color:var(--ink-2)}
+nav.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.status-note{font-size:13px;background:var(--glow-soft);color:var(--glow-ink);padding:8px 12px;border-radius:8px}
+
+.tonight{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px;display:grid;grid-template-columns:1fr auto;gap:16px 24px;align-items:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.tonight::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:var(--glow)}
+.tonight .dish{font-family:var(--display);font-size:clamp(28px,5vw,40px);line-height:1.1;margin-top:4px}
+.tonight .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.tonight .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.tonight .notes{margin-top:8px;color:var(--ink-2);max-width:60ch}
+.done-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--accent)}
+@media (max-width:640px){.tonight{grid-template-columns:1fr}.tonight .actions{justify-content:flex-start}}
+
+.chip{display:inline-flex;align-items:center;font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.chip.fav{background:var(--glow-soft);color:var(--glow-ink)}
+.chip.ex{background:transparent;border:1px dashed var(--line)}
+.chip.effort-quick{background:var(--accent-soft);color:var(--accent)}
+
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.section-head .tools{display:flex;gap:8px;flex-wrap:wrap}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:176px}
+.day.today{border-color:var(--glow);box-shadow:0 0 0 1px var(--glow) inset}
+.day.cooked .dname{text-decoration:line-through;text-decoration-color:var(--accent);text-decoration-thickness:2px}
+.day .dhead{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.day .dow{font-weight:700;font-size:13px}
+.day .date{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.day .dname{font-family:var(--display);font-size:17px;line-height:1.2;flex:1;overflow-wrap:anywhere}
+.day .dname.empty{font-family:var(--body);font-size:14px;color:var(--ink-2);font-style:italic}
+.day .dfoot{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.day select{width:100%;border:1px solid var(--line);background:var(--surface-2);border-radius:6px;padding:4px 6px;font-size:13px}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:6px;width:30px;height:28px;display:inline-grid;place-items:center;font-size:14px;color:var(--ink-2)}
+.iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+.iconbtn[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+@media (max-width:860px){
+  .week{grid-template-columns:1fr}
+  .day{min-height:0;display:grid;grid-template-columns:78px 1fr;grid-template-areas:"h n" "h s" "h f";column-gap:12px;row-gap:6px}
+  .day .dhead{grid-area:h;flex-direction:column;justify-content:flex-start;gap:0}
+  .day .dname{grid-area:n}
+  .day .dsel{grid-area:s}
+  .day .dfoot{grid-area:f}
+}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.form-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+.form-grid .full{grid-column:1/-1}
+@media (max-width:640px){.form-grid{grid-template-columns:1fr}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.inp{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px;width:100%;color:var(--ink)}
+textarea.inp{resize:vertical;min-height:60px}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters .inp{max-width:260px}
+.meal-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.meal{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.meal:first-child{border-top:0}
+.meal .mname{font-weight:600;font-size:15.5px}
+.meal .msub{font-size:13px;color:var(--ink-2);display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:2px}
+.meal .mnotes{font-size:13px;color:var(--ink-2);margin-top:2px}
+.meal .mact{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:560px){.meal{grid-template-columns:32px 1fr}.meal .mact{grid-column:2;justify-content:flex-start}}
+.star{border:0;background:transparent;font-size:20px;line-height:1;color:var(--line);padding:4px}
+.star[aria-pressed="true"]{color:var(--glow)}
+.empty-state{padding:28px;text-align:center;color:var(--ink-2)}
+.banner{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:10px 14px;font-size:14px}
+
+.quick{display:flex;gap:6px;flex-wrap:wrap}
+.quick button{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:4px 11px;font-size:13px;font-weight:500}
+.quick button:hover{border-color:var(--accent);color:var(--accent)}
+.ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.idea{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.idea h3{font-size:19px;line-height:1.2}
+.idea p{margin:0;font-size:14px;color:var(--ink-2)}
+.idea .ing{font-size:13px;color:var(--ink-2)}
+.idea .ifoot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:4px}
+.thinking{display:flex;align-items:center;gap:10px;color:var(--ink-2);padding:16px 0}
+.pulse{width:10px;height:10px;border-radius:50%;background:var(--glow);animation:pulse 1.2s ease-in-out infinite;flex:none}
+@keyframes pulse{50%{transform:scale(.5);opacity:.4}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+.err{color:var(--danger)}
+
+/* recipe viewer */
+dialog.recipe{border:0;padding:0;border-radius:16px;background:var(--surface);color:var(--ink);width:min(720px,calc(100% - 24px));max-height:calc(100% - 24px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog.recipe::backdrop{background:rgba(12,18,14,.55)}
+.r-inner{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
+.r-head{padding:18px 20px 14px;border-bottom:1px solid var(--line);display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+.r-head h2{font-size:24px;line-height:1.15}
+.r-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.r-body{overflow:auto;padding:18px 20px 24px;display:flex;flex-direction:column;gap:20px}
+.r-img{width:100%;max-height:260px;object-fit:cover;border-radius:10px;background:var(--surface-2)}
+.r-cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:24px}
+@media (max-width:640px){.r-cols{grid-template-columns:1fr}}
+.r-cols h3{font-size:18px;margin-bottom:8px}
+.ingredients{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ingredients label{display:flex;gap:8px;align-items:flex-start;font-size:14.5px;cursor:pointer}
+.ingredients input{margin-top:4px;accent-color:var(--accent)}
+.ingredients input:checked + span{color:var(--ink-2);text-decoration:line-through}
+.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.steps li::marker{font-family:var(--display);color:var(--accent)}
+.steps li.section{list-style:none;margin-left:-22px;font-weight:700;color:var(--ink-2);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.r-foot{display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--line);padding:12px 20px}
+.r-foot .spacer{flex:1}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:var(--shadow);z-index:10;max-width:calc(100% - 32px)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" id="today-label"></span>
+      <h1>Supper Rotation</h1>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="week">This week</button>
+      <button role="tab" aria-selected="false" data-tab="meals">Our meals</button>
+      <button role="tab" aria-selected="false" data-tab="ideas">New ideas</button>
+      <button role="tab" aria-selected="false" data-tab="settings">Settings</button>
+    </nav>
+  </header>
+
+  <div class="status-note" id="conn-note" hidden>Can't reach the Supper Rotation server. Check that it's still running on the home computer.</div>
+
+  <!-- WEEK -->
+  <section id="view-week" class="wrap">
+    <div class="tonight" id="tonight"></div>
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Next 7 nights</span>
+        <h2>The plan</h2>
+      </div>
+      <div class="tools">
+        <button class="btn" id="btn-reshuffle" title="Re-roll every night that isn't pinned or cooked">Reshuffle</button>
+        <button class="btn primary" id="btn-plan">Fill empty nights</button>
+      </div>
+    </div>
+    <div class="week" id="week"></div>
+    <p class="muted" style="margin:0;font-size:13px">The rotation picks meals you haven't made in a while and chooses favorites more often. It keeps weekend projects off weeknights and avoids the same kind of meal two nights in a row. Pin (📌) a night to keep it when you reshuffle.</p>
+  </section>
+
+  <!-- MEALS -->
+  <section id="view-meals" class="wrap" style="gap:16px" hidden>
+    <div class="panel">
+      <h2 id="form-title" style="margin-bottom:12px">Add a meal</h2>
+      <form id="meal-form">
+        <div class="form-grid">
+          <label class="f">Meal name<input class="inp" id="f-name" required maxlength="80" placeholder="e.g. Sheet-pan chicken fajitas"></label>
+          <label class="f">Kind<select class="inp" id="f-cat"></select></label>
+          <label class="f">Effort<select class="inp" id="f-effort">
+            <option value="quick">Quick (under 30 min)</option>
+            <option value="medium" selected>Medium</option>
+            <option value="project">Weekend project</option>
+          </select></label>
+          <label class="f full">Recipe link <span style="font-weight:400">(optional; ingredients and steps get pulled in so you can read them here)</span><input class="inp" id="f-url" type="url" inputmode="url" placeholder="https://..."></label>
+          <label class="f full">Notes <span style="font-weight:400">(sides, tweaks, who loves it)</span><textarea class="inp" id="f-notes" maxlength="1000"></textarea></label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn ghost" id="f-cancel" hidden>Cancel</button>
+          <button type="submit" class="btn primary" id="f-submit">Add meal</button>
+        </div>
+      </form>
+    </div>
+    <div class="banner" id="example-banner" hidden>
+      <span>Meals marked <span class="chip ex">example</span> are placeholders that show how the rotation works.</span>
+      <button class="btn small" id="btn-clear-examples">Remove examples</button>
+    </div>
+    <div class="section-head">
+      <h2 id="meal-count">Our meals</h2>
+      <div class="filters">
+        <input class="inp" id="search" type="search" placeholder="Search meals">
+        <select class="inp" id="filter-cat" style="width:auto"></select>
+      </div>
+    </div>
+    <div class="meal-list" id="meal-list"></div>
+  </section>
+
+  <!-- IDEAS -->
+  <section id="view-ideas" class="wrap" style="gap:16px" hidden>
+    <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <h2>Find something new</h2>
+        <p class="muted" style="margin:4px 0 0">Your local Ollama model suggests dinners based on the meals you already love. Add a hint if you're in the mood for something specific.</p>
+      </div>
+      <textarea class="inp" id="idea-prompt" placeholder="Optional: 'use up ground turkey', 'cozy fall soup', 'no dairy'..."></textarea>
+      <div class="quick" id="quick"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn primary" id="btn-ideas">Suggest meals</button>
+        <span class="muted" style="font-size:13px" id="model-label"></span>
+      </div>
+    </div>
+    <div id="idea-status"></div>
+    <div class="ideas" id="ideas"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="view-settings" class="wrap" style="gap:16px" hidden>
+    <div class="panel" style="display:flex;flex-direction:column;gap:14px;max-width:620px">
+      <div>
+        <h2>Ollama</h2>
+        <p class="muted" style="margin:4px 0 0">Meal ideas and written recipes come from Ollama running on your network. Enter the address of the laptop running it.</p>
+      </div>
+      <form id="settings-form" style="display:flex;flex-direction:column;gap:12px">
+        <label class="f">Ollama address<input class="inp" id="s-url" placeholder="http://192.168.1.50:11434"></label>
+        <label class="f">Model<select class="inp" id="s-model"><option value="">First installed model</option></select></label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn" id="s-test">Test connection</button>
+          <button type="submit" class="btn primary">Save</button>
+        </div>
+        <div id="s-status" style="font-size:14px"></div>
+      </form>
+      <details class="muted" style="font-size:13.5px">
+        <summary style="cursor:pointer;font-weight:600">Setting up Ollama on the other laptop</summary>
+        <ol style="padding-left:18px;margin:8px 0 0;display:flex;flex-direction:column;gap:6px">
+          <li>Ollama only listens to its own laptop by default. To let this app reach it, set the environment variable <code>OLLAMA_HOST</code> to <code>0.0.0.0</code> and restart Ollama.</li>
+          <li>Allow port 11434 through that laptop's firewall for your home network.</li>
+          <li>Pull a model if you haven't: <code>ollama pull llama3.1</code> (or qwen2.5, mistral, gemma3, and so on).</li>
+          <li>Find that laptop's local IP address (for example, run <code>ipconfig</code> on Windows) and enter <code>http://THAT-IP:11434</code> above.</li>
+        </ol>
+      </details>
+    </div>
+  </section>
+</div>
+
+<dialog class="recipe" id="recipe-dlg" aria-labelledby="r-title">
+  <div class="r-inner">
+    <div class="r-head">
+      <div>
+        <span class="eyebrow" id="r-eyebrow">Recipe</span>
+        <h2 id="r-title"></h2>
+        <div class="r-meta" id="r-meta"></div>
+      </div>
+      <button class="iconbtn" id="r-close" aria-label="Close">✕</button>
+    </div>
+    <div class="r-body" id="r-body"></div>
+    <div class="r-foot" id="r-foot"></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+  const CATS = ["Chicken","Beef","Pork","Seafood","Pasta","Vegetarian","Soup & stew","Tacos & Mexican","Asian-inspired","Breakfast for dinner","Other"];
+  const EFFORT = {quick:"Quick",medium:"Medium",project:"Project"};
+  const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const OUT = "__out__";
+
+  let meals = [], plan = {days:{}}, settings = {}, version = 0;
+  let editingId = null, ideas = [], recipeFor = null;
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const parseIso = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+  const todayIso = () => iso(new Date());
+  const addDays = (s, n) => { const d = parseIso(s); d.setDate(d.getDate()+n); return iso(d); };
+  const daysBetween = (a, b) => Math.round((parseIso(b) - parseIso(a)) / 86400000);
+  const windowDays = () => Array.from({length:7}, (_, i) => addDays(todayIso(), i));
+  const mealById = id => meals.find(m => m.id === id);
+  const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return "link"; } };
+
+  function toast(msg){
+    const t = $("toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toast._t); toast._t = setTimeout(() => t.hidden = true, 3200);
+  }
+
+  // ---------- server ----------
+  async function api(method, url, body){
+    const res = await fetch(url, {method, headers: body ? {"Content-Type":"application/json"} : {}, body: body ? JSON.stringify(body) : undefined});
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+    return data;
+  }
+  async function refresh(){
+    try {
+      const s = await api("GET", "/api/state");
+      version = s.version; meals = s.meals; plan = s.plan || {days:{}}; settings = s.settings || {};
+      $("conn-note").hidden = true;
+      render();
+    } catch { $("conn-note").hidden = false; }
+  }
+  function listen(){
+    const es = new EventSource("/api/events");
+    es.onmessage = e => { if (Number(e.data) !== version) refresh(); $("conn-note").hidden = true; };
+    es.onerror = () => { $("conn-note").hidden = false; };
+  }
+  async function act(fn, okMsg){
+    try { const r = await fn(); if (okMsg) toast(okMsg); await refresh(); return r; }
+    catch (e){ toast(e.message || "Couldn't save that. Try again."); await refresh(); }
+  }
+
+  function savePlan(){
+    const cutoff = addDays(todayIso(), -21);
+    for (const k of Object.keys(plan.days)) if (k < cutoff) delete plan.days[k];
+    render();
+    return act(() => api("PUT", "/api/plan", {days: plan.days}));
+  }
+
+  // ---------- rotation ----------
+  function score(meal, dayIso, prevCat, used){
+    const since = meal.lastCooked ? Math.max(0, daysBetween(meal.lastCooked, dayIso)) : 45;
+    let s = Math.min(since, 60);
+    if (meal.favorite) s += 12;
+    if (prevCat && meal.category === prevCat) s -= 18;
+    const dow = parseIso(dayIso).getDay();
+    const weeknight = dow >= 1 && dow <= 4;
+    if (weeknight && meal.effort === "project") s -= 25;
+    if (weeknight && meal.effort === "quick") s += 4;
+    if (used.has(meal.id)) s -= 200;
+    return s + Math.random() * 10;
+  }
+  function pickFor(dayIso, used, excludeId){
+    const pool = meals.filter(m => m.id !== excludeId);
+    if (!pool.length) return null;
+    const prev = plan.days[addDays(dayIso, -1)];
+    const prevCat = prev && mealById(prev.mealId)?.category;
+    let best = null, bestS = -Infinity;
+    for (const m of pool){ const s = score(m, dayIso, prevCat, used); if (s > bestS){ best = m; bestS = s; } }
+    return best;
+  }
+  function usedIds(exceptDay){
+    const set = new Set();
+    for (const d of windowDays()) if (d !== exceptDay && plan.days[d]?.mealId) set.add(plan.days[d].mealId);
+    return set;
+  }
+  function fillWeek(reshuffle){
+    if (!meals.length){ toast("Add a few meals first."); switchTab("meals"); return; }
+    let changed = 0;
+    for (const d of windowDays()){
+      const e = plan.days[d];
+      const keep = e && (e.status === "cooked" || e.pinned || e.mealId === OUT || (!reshuffle && e.mealId));
+      if (keep) continue;
+      const m = pickFor(d, usedIds(d));
+      if (m){ plan.days[d] = {mealId:m.id, status:"planned", pinned:false}; changed++; }
+    }
+    savePlan();
+    toast(changed ? `Planned ${changed} night${changed>1?"s":""}.` : "Every night is already planned.");
+  }
+  function swapDay(d){
+    const cur = plan.days[d]?.mealId;
+    const m = pickFor(d, usedIds(d), cur);
+    if (!m){ toast("Add more meals to swap."); return; }
+    plan.days[d] = {mealId:m.id, status:"planned", pinned:!!plan.days[d]?.pinned};
+    savePlan();
+  }
+  async function markCooked(d){
+    const e = plan.days[d]; if (!e || !e.mealId || e.mealId === OUT) return;
+    const undo = e.status === "cooked";
+    e.status = undo ? "planned" : "cooked";
+    await savePlan();
+    const m = mealById(e.mealId); if (!m) return;
+    if (!undo){
+      const newer = !m.lastCooked || m.lastCooked < d;
+      await act(() => api("PATCH", "/api/meals/"+m.id, {timesCooked:(m.timesCooked||0)+1, ...(newer ? {lastCooked:d} : {})}), `Nice. ${m.name} goes to the back of the rotation.`);
+    } else {
+      await act(() => api("PATCH", "/api/meals/"+m.id, {timesCooked:Math.max(0,(m.timesCooked||0)-1)}));
+    }
+  }
+
+  // ---------- render ----------
+  function chips(m){
+    let h = `<span class="chip">${esc(m.category||"Other")}</span>`;
+    h += `<span class="chip ${m.effort==="quick"?"effort-quick":""}">${EFFORT[m.effort]||"Medium"}</span>`;
+    if (m.favorite) h += `<span class="chip fav">★ Favorite</span>`;
+    if (m.example) h += `<span class="chip ex">example</span>`;
+    return h;
+  }
+  function lastMadeText(m){
+    if (!m.lastCooked) return "Not made yet";
+    const n = daysBetween(m.lastCooked, todayIso());
+    if (n <= 0) return "Made today";
+    if (n === 1) return "Made yesterday";
+    return `Made ${n} days ago`;
+  }
+  const hasRecipe = m => !!(m.recipe || m.recipeUrl);
+  const recipeBtn = (m, cls="btn small") => `<button class="${cls}" data-act="recipe" data-id="${esc(m.id)}">${m.recipe ? "Recipe" : m.recipeUrl ? "Recipe" : "Get a recipe"}</button>`;
+
+  function renderTonight(){
+    const d = todayIso(); const e = plan.days[d]; const el = $("tonight");
+    const m = e && mealById(e.mealId);
+    if (e && e.mealId === OUT){
+      el.innerHTML = `<div><span class="eyebrow">Tonight</span><div class="dish">Leftovers or eating out</div><div class="notes">Night off from cooking.</div></div>
+        <div class="actions"><button class="btn" data-act="swap" data-day="${d}">Cook something instead</button></div>`;
+      return;
+    }
+    if (!m){
+      el.innerHTML = `<div><span class="eyebrow">Tonight</span><div class="dish">Nothing planned yet</div>
+        <div class="notes">${meals.length ? "Let the rotation plan the week, then change any night you don't like." : "Add the meals you already love, and the rotation will plan from them."}</div></div>
+        <div class="actions">${meals.length ? `<button class="btn primary" data-act="fill">Plan the week</button>` : `<button class="btn primary" data-act="goto-meals">Add meals</button>`}</div>`;
+      return;
+    }
+    const cooked = e.status === "cooked";
+    el.innerHTML = `<div><span class="eyebrow">Tonight's dinner</span><div class="dish">${esc(m.name)}</div>
+      <div class="meta">${chips(m)}<span class="muted" style="font-size:13px">${lastMadeText(m)}${m.timesCooked?` · made ${m.timesCooked}×`:""}${m.recipe?.totalTime?` · ${esc(m.recipe.totalTime)}`:""}</span></div>
+      ${m.notes ? `<div class="notes">${esc(m.notes)}</div>` : ""}</div>
+      <div class="actions">${recipeBtn(m, hasRecipe(m) ? "btn" : "btn ghost")}${cooked
+        ? `<span class="done-badge">✓ Cooked</span><button class="btn small ghost" data-act="cooked" data-day="${d}">Undo</button>`
+        : `<button class="btn" data-act="swap" data-day="${d}">Not feeling it</button><button class="btn primary" data-act="cooked" data-day="${d}">We made it</button>`}</div>`;
+  }
+
+  function renderWeek(){
+    const today = todayIso();
+    const sorted = [...meals].sort((a,b) => a.name.localeCompare(b.name));
+    $("week").innerHTML = windowDays().map(d => {
+      const e = plan.days[d] || {}; const dt = parseIso(d);
+      const m = mealById(e.mealId); const out = e.mealId === OUT;
+      const cooked = e.status === "cooked";
+      const name = out ? "Leftovers / out" : m ? esc(m.name) : "";
+      const opts = `<option value="">Pick a meal…</option><option value="${OUT}" ${out?"selected":""}>Leftovers / eating out</option>` +
+        sorted.map(x => `<option value="${esc(x.id)}" ${x.id===e.mealId?"selected":""}>${esc(x.name)}</option>`).join("");
+      return `<div class="day ${d===today?"today":""} ${cooked?"cooked":""}">
+        <div class="dhead"><span class="dow">${d===today?"Tonight":DOW[dt.getDay()]}</span><span class="date">${dt.toLocaleDateString(undefined,{month:"short",day:"numeric"})}</span></div>
+        <div class="dname ${name?"":"empty"}">${name || "Open night"}</div>
+        <div class="dsel"><select id="sel-${d}" data-day="${d}" aria-label="Choose a meal for ${d}">${opts}</select></div>
+        <div class="dfoot">
+          <button class="iconbtn" data-act="swap" data-day="${d}" title="Swap for another meal" aria-label="Swap">↻</button>
+          <button class="iconbtn" data-act="pin" data-day="${d}" aria-pressed="${!!e.pinned}" title="Pin this night so reshuffle keeps it" aria-label="Pin">📌</button>
+          ${m && !out ? `<button class="iconbtn" data-act="cooked" data-day="${d}" aria-pressed="${cooked}" title="${cooked?"Undo cooked":"Mark cooked"}" aria-label="Mark cooked">✓</button>` : ""}
+          ${m && hasRecipe(m) ? `<button class="iconbtn" data-act="recipe" data-id="${esc(m.id)}" title="View recipe" aria-label="View recipe">📖</button>` : ""}
+          ${e.mealId ? `<button class="iconbtn" data-act="clear" data-day="${d}" title="Clear this night" aria-label="Clear">✕</button>` : ""}
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  function renderMeals(){
+    const q = $("search").value.trim().toLowerCase();
+    const cat = $("filter-cat").value;
+    const list = meals
+      .filter(m => (!q || m.name.toLowerCase().includes(q) || (m.notes||"").toLowerCase().includes(q)) && (!cat || m.category === cat))
+      .sort((a,b) => (b.favorite?1:0)-(a.favorite?1:0) || a.name.localeCompare(b.name));
+    $("meal-count").textContent = `Our meals (${meals.length})`;
+    $("example-banner").hidden = !meals.some(m => m.example);
+    if (!list.length){
+      $("meal-list").innerHTML = `<div class="empty-state">${meals.length ? "No meals match that search." : "No meals yet. Add your go-to dinners above, or pick some from New ideas."}</div>`;
+      return;
+    }
+    $("meal-list").innerHTML = list.map(m => `<div class="meal">
+      <button class="star" data-act="fav" data-id="${esc(m.id)}" aria-pressed="${!!m.favorite}" aria-label="Favorite" title="Favorites come up more often">★</button>
+      <div><div class="mname">${esc(m.name)}</div>
+        <div class="msub">${chips(m)}<span>${lastMadeText(m)}${m.timesCooked?` · ${m.timesCooked}×`:""}</span>${m.recipeUrl?`<span>· ${esc(hostOf(m.recipeUrl))}</span>`:""}</div>
+        ${m.notes ? `<div class="mnotes">${esc(m.notes)}</div>` : ""}</div>
+      <div class="mact">
+        ${recipeBtn(m, hasRecipe(m) ? "btn small" : "btn small ghost")}
+        <button class="btn small ghost" data-act="edit" data-id="${esc(m.id)}">Edit</button>
+        <button class="btn small ghost danger" data-act="del" data-id="${esc(m.id)}">Delete</button>
+      </div></div>`).join("");
+  }
+
+  function renderSettingsLabel(){
+    $("model-label").textContent = settings.ollamaUrl ? `Using ${settings.model || "the first installed model"} at ${settings.ollamaUrl}` : "";
+    if (document.activeElement !== $("s-url")) $("s-url").value = settings.ollamaUrl || "";
+    const sel = $("s-model");
+    if (settings.model && ![...sel.options].some(o => o.value === settings.model)) sel.add(new Option(settings.model, settings.model));
+    sel.value = settings.model || "";
+  }
+
+  function render(){
+    renderTonight(); renderWeek(); renderMeals(); renderSettingsLabel();
+    if (ideas.length) renderIdeas();
+    if (recipeFor && $("recipe-dlg").open) renderRecipe();
+  }
+
+  // ---------- recipe viewer ----------
+  let recipeBusy = "";
+  function openRecipe(id){
+    recipeFor = id; recipeBusy = "";
+    const dlg = $("recipe-dlg");
+    renderRecipe();
+    if (!dlg.open) dlg.showModal();
+    const m = mealById(id);
+    if (m && !m.recipe && m.recipeUrl) loadRecipe("link");
+  }
+  async function loadRecipe(mode){
+    const m = mealById(recipeFor); if (!m) return;
+    recipeBusy = mode; renderRecipe();
+    try {
+      await api("POST", `/api/meals/${m.id}/recipe`, {mode});
+      recipeBusy = ""; await refresh();
+    } catch (e){
+      recipeBusy = ""; renderRecipe(e.message);
+    }
+  }
+  function renderRecipe(error){
+    const m = mealById(recipeFor);
+    if (!m){ $("recipe-dlg").close(); return; }
+    const r = m.recipe;
+    $("r-title").textContent = r?.title || m.name;
+    $("r-eyebrow").textContent = r?.source === "ollama" ? "Recipe written by your Ollama model" : r ? `Recipe from ${hostOf(m.recipeUrl)}` : "Recipe";
+    $("r-meta").innerHTML = [r?.totalTime && `<span class="chip">${esc(r.totalTime)}</span>`, r?.servings && `<span class="chip">Serves ${esc(r.servings.replace(/^serves\s*/i,""))}</span>`, chips(m)].filter(Boolean).join("");
+    const body = $("r-body");
+    if (recipeBusy){
+      body.innerHTML = `<div class="thinking"><span class="pulse"></span>${recipeBusy === "link" ? `Reading the recipe from ${esc(hostOf(m.recipeUrl))}…` : "Your Ollama model is writing a recipe. This can take a minute on a laptop…"}</div>`;
+    } else if (r){
+      const steps = r.steps.map(s => /^— .* —$/.test(s) ? `<li class="section">${esc(s.slice(2,-2))}</li>` : `<li>${esc(s)}</li>`).join("");
+      body.innerHTML = `${error ? `<p class="err" style="margin:0">${esc(error)}</p>` : ""}
+        ${r.image ? `<img class="r-img" src="${esc(r.image)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
+        ${m.notes ? `<p class="muted" style="margin:0"><strong>Our notes:</strong> ${esc(m.notes)}</p>` : ""}
+        <div class="r-cols">
+          <div><h3>Ingredients</h3><ul class="ingredients">${r.ingredients.map((x,i) => `<li><label><input type="checkbox" id="ing-${i}"><span>${esc(x)}</span></label></li>`).join("") || `<li class="muted">None listed.</li>`}</ul></div>
+          <div><h3>Steps</h3><ol class="steps">${steps || `<li class="muted">No steps listed.</li>`}</ol></div>
+        </div>`;
+    } else {
+      body.innerHTML = `${error ? `<p class="err" style="margin:0">${esc(error)}</p>` : ""}
+        <p style="margin:0">${m.recipeUrl ? "The recipe couldn't be read from that link." : "There's no recipe saved for this meal yet."}</p>
+        <p class="muted" style="margin:0">${m.recipeUrl ? "You can still open the link in your browser, or have your Ollama model write one." : "Add a recipe link to the meal from Our meals → Edit, or have your Ollama model write one."}</p>`;
+    }
+    const busy = !!recipeBusy;
+    $("r-foot").innerHTML = `
+      ${m.recipeUrl ? `<a class="btn" href="${esc(m.recipeUrl)}" target="_blank" rel="noopener">Open original ↗</a>` : ""}
+      ${m.recipeUrl ? `<button class="btn ghost" data-r="link" ${busy?"disabled":""}>Reload from link</button>` : ""}
+      <span class="spacer"></span>
+      ${!m.recipeUrl || !r ? `<button class="btn ${r ? "ghost" : "primary"}" data-r="ollama" ${busy?"disabled":""}>${r?.source === "ollama" ? "Write a different one" : "Have Ollama write one"}</button>` : ""}
+      <button class="btn ghost" data-r="edit">Edit meal</button>`;
+  }
+  $("r-foot").addEventListener("click", e => {
+    const b = e.target.closest("button[data-r]"); if (!b) return;
+    if (b.dataset.r === "edit"){ const id = recipeFor; $("recipe-dlg").close(); switchTab("meals"); startEdit(id); }
+    else loadRecipe(b.dataset.r);
+  });
+  $("r-close").addEventListener("click", () => $("recipe-dlg").close());
+  $("recipe-dlg").addEventListener("click", e => { if (e.target === $("recipe-dlg")) $("recipe-dlg").close(); });
+  $("recipe-dlg").addEventListener("close", () => { recipeFor = null; });
+
+  // ---------- events ----------
+  function switchTab(t){
+    for (const b of document.querySelectorAll("nav.tabs button")) b.setAttribute("aria-selected", String(b.dataset.tab === t));
+    for (const v of ["week","meals","ideas","settings"]) $("view-"+v).hidden = v !== t;
+    try { localStorage.setItem("sr-tab", t); } catch {}
+    if (t === "settings") loadModels(false);
+  }
+  document.querySelector("nav.tabs").addEventListener("click", e => { const b = e.target.closest("button[data-tab]"); if (b) switchTab(b.dataset.tab); });
+
+  $("btn-plan").addEventListener("click", () => fillWeek(false));
+  $("btn-reshuffle").addEventListener("click", () => fillWeek(true));
+
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const {act: a, day, id} = b.dataset;
+    if (a === "swap") swapDay(day);
+    else if (a === "cooked") markCooked(day);
+    else if (a === "fill") fillWeek(false);
+    else if (a === "goto-meals") switchTab("meals");
+    else if (a === "recipe") openRecipe(id);
+    else if (a === "pin"){ const x = plan.days[day] || (plan.days[day] = {mealId:null,status:"planned"}); x.pinned = !x.pinned; savePlan(); }
+    else if (a === "clear"){ delete plan.days[day]; savePlan(); }
+    else if (a === "fav"){ const m = mealById(id); if (m){ m.favorite = !m.favorite; render(); act(() => api("PATCH", "/api/meals/"+id, {favorite:m.favorite})); } }
+    else if (a === "edit") startEdit(id);
+    else if (a === "del"){
+      if (b.dataset.confirm) act(() => api("DELETE", "/api/meals/"+id), "Meal removed.");
+      else { b.dataset.confirm = "1"; b.textContent = "Confirm delete"; setTimeout(() => { if (b.isConnected){ delete b.dataset.confirm; b.textContent = "Delete"; } }, 3500); }
+    }
+  });
+  $("week").addEventListener("change", e => {
+    const s = e.target.closest("select[data-day]"); if (!s) return;
+    const d = s.dataset.day;
+    if (!s.value) delete plan.days[d];
+    else plan.days[d] = {mealId:s.value, status:"planned", pinned:plan.days[d]?.pinned ?? true};
+    savePlan();
+  });
+
+  // meal form
+  const catOpts = CATS.map(c => `<option>${c}</option>`).join("");
+  $("f-cat").innerHTML = catOpts;
+  $("filter-cat").innerHTML = `<option value="">All kinds</option>` + catOpts;
+  $("search").addEventListener("input", renderMeals);
+  $("filter-cat").addEventListener("change", renderMeals);
+
+  function resetForm(){
+    editingId = null; $("meal-form").reset(); $("f-effort").value = "medium";
+    $("form-title").textContent = "Add a meal"; $("f-submit").textContent = "Add meal"; $("f-cancel").hidden = true;
+  }
+  function startEdit(id){
+    const m = mealById(id); if (!m) return;
+    editingId = id;
+    $("f-name").value = m.name; $("f-cat").value = m.category || "Other"; $("f-effort").value = m.effort || "medium";
+    $("f-notes").value = m.notes || ""; $("f-url").value = m.recipeUrl || "";
+    $("form-title").textContent = "Edit meal"; $("f-submit").textContent = "Save changes"; $("f-cancel").hidden = false;
+    $("meal-form").scrollIntoView({behavior:"smooth", block:"center"}); $("f-name").focus();
+  }
+  $("f-cancel").addEventListener("click", resetForm);
+  $("meal-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const name = $("f-name").value.trim(); if (!name) return;
+    const data = {name, category:$("f-cat").value, effort:$("f-effort").value, notes:$("f-notes").value.trim(), recipeUrl:$("f-url").value.trim()};
+    $("f-submit").disabled = true;
+    let saved;
+    if (editingId){
+      const before = mealById(editingId);
+      saved = await act(() => api("PATCH", "/api/meals/"+editingId, {...data, example:false}), "Saved.");
+      if (saved && data.recipeUrl && data.recipeUrl !== before?.recipeUrl) importInBackground(saved);
+    } else {
+      saved = await act(() => api("POST", "/api/meals", data), `Added ${name}.`);
+      if (saved && data.recipeUrl) importInBackground(saved);
+    }
+    $("f-submit").disabled = false;
+    if (saved) resetForm();
+  });
+  async function importInBackground(m){
+    try { await api("POST", `/api/meals/${m.id}/recipe`, {mode:"link"}); toast(`Recipe for ${m.name} is ready to view.`); refresh(); }
+    catch (e){ toast(`Saved ${m.name}, but ${e.message.charAt(0).toLowerCase()+e.message.slice(1)}`); }
+  }
+  $("btn-clear-examples").addEventListener("click", async () => {
+    for (const m of meals.filter(x => x.example)) await api("DELETE", "/api/meals/"+m.id).catch(() => {});
+    await refresh(); toast("Examples removed.");
+  });
+
+  // ---------- ideas ----------
+  const QUICK = ["Quick weeknight","Cozy & comforting","Lighter / healthy","A cuisine we don't cook yet","Kid-friendly","Uses pantry staples"];
+  $("quick").innerHTML = QUICK.map(q => `<button type="button">${q}</button>`).join("");
+  $("quick").addEventListener("click", e => { const b = e.target.closest("button"); if (b) $("idea-prompt").value = b.textContent; });
+
+  function renderIdeas(){
+    $("ideas").innerHTML = ideas.map((x, i) => {
+      const have = meals.some(m => m.name.toLowerCase() === String(x.name).toLowerCase());
+      return `<div class="idea">
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip">${esc(x.category)}</span><span class="chip ${x.effort==="quick"?"effort-quick":""}">${EFFORT[x.effort]||"Medium"}</span></div>
+        <h3>${esc(x.name)}</h3>
+        ${x.why ? `<p>${esc(x.why)}</p>` : ""}
+        ${x.ingredients?.length ? `<div class="ing"><strong>Key ingredients:</strong> ${esc(x.ingredients.join(", "))}</div>` : ""}
+        <div class="ifoot"><span class="muted" style="font-size:13px">${have?"On your list":""}</span>
+          <button class="btn small ${have?"":"primary"}" data-idea="${i}" ${have?"disabled":""}>${have?"Added":"Add to our meals"}</button></div>
+      </div>`;
+    }).join("");
+  }
+  $("ideas").addEventListener("click", async e => {
+    const b = e.target.closest("button[data-idea]"); if (!b) return;
+    const x = ideas[+b.dataset.idea];
+    b.disabled = true;
+    await act(() => api("POST", "/api/meals", {name:x.name, category:x.category, effort:x.effort,
+      notes: x.ingredients?.length ? "Key ingredients: " + x.ingredients.join(", ") : ""}), `Added ${x.name}. Open it in Our meals to get a recipe.`);
+  });
+  $("btn-ideas").addEventListener("click", async () => {
+    $("btn-ideas").disabled = true;
+    $("idea-status").innerHTML = `<div class="thinking"><span class="pulse"></span>Asking your Ollama model for ideas. On a laptop this can take a minute…</div>`;
+    try {
+      const r = await api("POST", "/api/ideas", {nudge: $("idea-prompt").value.trim()});
+      ideas = r.ideas || [];
+      $("idea-status").innerHTML = ideas.length ? "" : `<p class="muted">The model didn't return any ideas. Try again, or try a different model in Settings.</p>`;
+      renderIdeas();
+    } catch (e){
+      $("idea-status").innerHTML = `<p class="err">${esc(e.message)}</p>`;
+    } finally { $("btn-ideas").disabled = false; }
+  });
+
+  // ---------- settings ----------
+  async function loadModels(verbose){
+    const st = $("s-status");
+    if (verbose) st.innerHTML = `<span class="muted">Checking ${esc(settings.ollamaUrl)}…</span>`;
+    try {
+      const {models} = await api("GET", "/api/ollama/models");
+      const sel = $("s-model"); const cur = settings.model || "";
+      sel.innerHTML = `<option value="">First installed model</option>` + models.map(n => `<option>${esc(n)}</option>`).join("");
+      if (cur && !models.includes(cur)) sel.add(new Option(cur + " (not installed)", cur));
+      sel.value = cur;
+      st.innerHTML = models.length ? `<span style="color:var(--accent);font-weight:600">Connected. ${models.length} model${models.length>1?"s":""} available.</span>` : `<span class="err">Connected, but no models are installed. Run <code>ollama pull llama3.1</code> on that laptop.</span>`;
+    } catch (e){
+      st.innerHTML = `<span class="err">${esc(e.message)}</span>`;
+    }
+  }
+  $("s-test").addEventListener("click", async () => {
+    await api("PUT", "/api/settings", {ollamaUrl: $("s-url").value.trim()}).then(s => settings = s).catch(() => {});
+    loadModels(true);
+  });
+  $("settings-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    await act(() => api("PUT", "/api/settings", {ollamaUrl: $("s-url").value.trim(), model: $("s-model").value}), "Settings saved.");
+    loadModels(true);
+  });
+
+  // ---------- boot ----------
+  $("today-label").textContent = new Date().toLocaleDateString(undefined,{weekday:"long", month:"long", day:"numeric"});
+  try { const t = localStorage.getItem("sr-tab"); if (t) switchTab(t); } catch {}
+  refresh().then(listen);
+  // roll the "tonight" view over at midnight if the page stays open
+  let lastDay = todayIso();
+  setInterval(() => { if (todayIso() !== lastDay){ lastDay = todayIso(); render(); } }, 60000);
+})();
+</script>
+</body>
+</html>

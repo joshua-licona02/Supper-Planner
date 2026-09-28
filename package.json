@@ -1,0 +1,9 @@
+{
+  "name": "supper-rotation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Home-network dinner planner that rotates your meals, reads recipe links, and gets ideas from a local Ollama model.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
